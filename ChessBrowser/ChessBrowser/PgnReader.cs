@@ -94,9 +94,9 @@ namespace ChessBrowser
                     StringBuilder sb = new StringBuilder();
                     line = read.ReadLine();
                     while (line.Length != 0)
-                    {
-                        line = read.ReadLine();
+                    { 
                         sb.Append(line);
+                        line = read.ReadLine();
                         if (line == null)
                         {
                             break;

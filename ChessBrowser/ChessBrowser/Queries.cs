@@ -1,4 +1,5 @@
-﻿using Microsoft.Maui.Controls;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 /*
   Author: Daniel Kopta and ...
@@ -140,6 +142,87 @@ namespace ChessBrowser
                 {
                     // Open a connection
                     conn.Open();
+
+                    MySqlCommand cmd = conn.CreateCommand();
+
+
+
+                    //create command string
+                    StringBuilder sb = new StringBuilder();
+                    if(showMoves)
+                    {
+                        // correct string should look like select p1.Name from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID limit 10;
+
+                        sb.Append("select Events.Name as Event, Site, Date, p1.Name as WhitePlayer, p2.Name as BlackPlayer, Result, Moves from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID");
+                    }
+                    else
+                    {
+                        sb.Append("select Events.Name as Event, Site, Date, p1.Name as WhitePlayer, p2.Name as BlackPlayer, Result from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID");
+
+                    }
+
+                    if (white != null)
+                    {
+                        sb.Append(" and WhitePlayer = @WhitePlayer");
+                        cmd.Parameters.AddWithValue("@WhitePlayer", white);
+
+                    }
+                    if (black != null)
+                    {
+                        sb.Append(" and BlackPlayer = @BlackPlayer");
+                        cmd.Parameters.AddWithValue("@BlackPlayer", black);
+
+                    }
+                    if (winner != null)
+                    {
+                        sb.Append(" and Result = @Result");
+                        cmd.Parameters.AddWithValue("@Result", winner);
+                    }
+                    if (useDate)
+                    {
+                        sb.Append(" and Events.Date > @StartTime and Events.Date < @EndTime");
+                        cmd.Parameters.AddWithValue("@StartTime", start);
+                        cmd.Parameters.AddWithValue("@EndTime", end);
+
+                    }
+                    if (opening != null)
+                    {
+                        sb.Append(" and g.Moves like @Opening");
+                        opening = opening +"%";
+                        cmd.Parameters.AddWithValue("@Opening", opening);
+
+                    }
+                    sb.Append(" limit 10;");
+                    Console.WriteLine(sb);
+                    cmd.CommandText = sb.ToString();
+
+
+
+                    //read result and parse into return
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                      
+                        while (reader.Read())
+                        {
+                            numRows++;
+                            parsedResult = parsedResult + "\n"
+                                        + "Event: " + reader["Event"] + "\n"
+                                        + "Site: " + reader["Site"] + "\n"
+                                        + "Date: " + reader["Date"] + "\n"
+                                        + "WhitePlayer: " + reader["WhitePlayer"] + "\n"
+                                        + "BlackPlayer: " + reader["BlackPlayer"] + "\n"
+                                        + "Result: " + reader["Result"] + "\n";
+                            if (showMoves)
+                            {
+                                parsedResult = parsedResult+ "Moves: " + reader["Moves"] + "\n";
+                            }
+                            
+
+                        }
+                    };
+                    
+
+
 
                     // TODO:
                     //       Generate and execute an SQL command,
