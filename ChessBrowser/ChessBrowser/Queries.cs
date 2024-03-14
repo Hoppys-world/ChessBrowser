@@ -163,13 +163,13 @@ namespace ChessBrowser
 
                     if (white != null)
                     {
-                        sb.Append(" and WhitePlayer = @WhitePlayer");
+                        sb.Append(" and p1.Name = @WhitePlayer");
                         cmd.Parameters.AddWithValue("@WhitePlayer", white);
 
                     }
                     if (black != null)
                     {
-                        sb.Append(" and BlackPlayer = @BlackPlayer");
+                        sb.Append(" and p2.Name = @BlackPlayer");
                         cmd.Parameters.AddWithValue("@BlackPlayer", black);
 
                     }
@@ -180,7 +180,7 @@ namespace ChessBrowser
                     }
                     if (useDate)
                     {
-                        sb.Append(" and Events.Date > @StartTime and Events.Date < @EndTime");
+                        sb.Append(" and Events.Date >= @StartTime and Events.Date <= @EndTime");
                         cmd.Parameters.AddWithValue("@StartTime", start);
                         cmd.Parameters.AddWithValue("@EndTime", end);
 
@@ -192,7 +192,7 @@ namespace ChessBrowser
                         cmd.Parameters.AddWithValue("@Opening", opening);
 
                     }
-                    sb.Append(" limit 10;");
+                    sb.Append(";");
                     Console.WriteLine(sb);
                     cmd.CommandText = sb.ToString();
 
@@ -204,11 +204,21 @@ namespace ChessBrowser
                       
                         while (reader.Read())
                         {
+                            string d;
                             numRows++;
+                            try
+                            {
+                                d = reader["Date"].ToString();
+                            }
+                            catch
+                            {
+                                
+                                d="00/00/0000 12:00:00 AM";
+                            }
                             parsedResult = parsedResult + "\n"
                                         + "Event: " + reader["Event"] + "\n"
                                         + "Site: " + reader["Site"] + "\n"
-                                        + "Date: " + reader["Date"] + "\n"
+                                        + "Date: " + d + "\n"
                                         + "WhitePlayer: " + reader["WhitePlayer"] + "\n"
                                         + "BlackPlayer: " + reader["BlackPlayer"] + "\n"
                                         + "Result: " + reader["Result"] + "\n";
@@ -216,6 +226,7 @@ namespace ChessBrowser
                             {
                                 parsedResult = parsedResult+ "Moves: " + reader["Moves"] + "\n";
                             }
+                            d = "";
                             
 
                         }
