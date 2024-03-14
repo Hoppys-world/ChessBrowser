@@ -69,7 +69,7 @@ namespace ChessBrowser
 
                         //create black player
                         MySqlCommand playercmd2 = new MySqlCommand();
-                        playercmd2.CommandText = "insert ignore into Players(Name, Elo) " + "values (@PlayerName, @Elo);";
+                        playercmd2.CommandText = "insert ignore into Players(Name, Elo) " + "values (@PlayerName, @Elo) ON DUPLICATE KEY UPDATE Elo = IF(@Elo > Elo, @Elo, Elo);";
                         playercmd2.Parameters.AddWithValue("@PlayerName", game.blackPlayer);
                         playercmd2.Parameters.AddWithValue("@Elo", game.blackElo);
 
@@ -157,7 +157,7 @@ namespace ChessBrowser
                     }
                     else
                     {
-                        sb.Append("select Events.Name as Event, Site, Date, p1.Name as WhitePlayer, p2.Name as BlackPlayer, Result from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID");
+                        sb.Append("select Events.Name as Event, Site, Date, p1.Name as WhitePlayer, p2.Name as BlackPlayer,p1.Elo as WhiteElo, p2.Elo as BlackElo, Result from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID");
 
                     }
 
@@ -201,7 +201,7 @@ namespace ChessBrowser
                     //read result and parse into return
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
-                      
+
                         while (reader.Read())
                         {
                             string d;
@@ -212,15 +212,15 @@ namespace ChessBrowser
                             }
                             catch
                             {
-                                
-                                d="00/00/0000 12:00:00 AM";
+
+                                d = "00/00/0000 12:00:00 AM";
                             }
                             parsedResult = parsedResult + "\n"
                                         + "Event: " + reader["Event"] + "\n"
                                         + "Site: " + reader["Site"] + "\n"
                                         + "Date: " + d + "\n"
-                                        + "WhitePlayer: " + reader["WhitePlayer"] + "\n"
-                                        + "BlackPlayer: " + reader["BlackPlayer"] + "\n"
+                                        + "WhitePlayer: " + reader["WhitePlayer"] + " " + "(" + reader["WhiteElo"] + ")" + "\n"
+                                        + "BlackPlayer: " + reader["BlackPlayer"] + " " + "(" + reader["BlackElo"] + ")" + "\n"
                                         + "Result: " + reader["Result"] + "\n";
                             if (showMoves)
                             {
