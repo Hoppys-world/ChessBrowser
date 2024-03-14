@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls;
+<<<<<<< HEAD
+=======
+using Microsoft.UI.Xaml;
+>>>>>>> 1957d87b383dff0cc627314a42d42743fae3253e
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
@@ -8,6 +12,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+<<<<<<< HEAD
+=======
+using Windows.Gaming.Input;
+>>>>>>> 1957d87b383dff0cc627314a42d42743fae3253e
 
 /*
   Author: Daniel Kopta and ...
@@ -185,6 +193,7 @@ namespace ChessBrowser
                         cmd.Parameters.AddWithValue("@EndTime", end);
 
                     }
+<<<<<<< HEAD
                     if (opening != null)
                     {
                         sb.Append(" and g.Moves like @Opening");
@@ -194,6 +203,9 @@ namespace ChessBrowser
                     }
                     sb.Append(" limit 10;");
                     Console.WriteLine(sb);
+=======
+                    sb.Append(" limit 10;");
+>>>>>>> 1957d87b383dff0cc627314a42d42743fae3253e
                     cmd.CommandText = sb.ToString();
 
 
@@ -201,6 +213,7 @@ namespace ChessBrowser
                     //read result and parse into return
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
+<<<<<<< HEAD
                       
                         while (reader.Read())
                         {
@@ -217,6 +230,21 @@ namespace ChessBrowser
                                 parsedResult = parsedResult+ "Moves: " + reader["Moves"] + "\n";
                             }
                             
+=======
+                        while (reader.Read())
+                        {
+                            var Event = reader["Event"];
+                            var Site = reader["Site"];
+                            var Date = reader["Date"];
+                            var WhitePlayer = reader["WhitePlayer"];
+                            var BlackPlayer = reader["BlackPlayer"];
+                            if (showMoves)
+                            {
+                                var moves = reader["Moves"];
+                            }
+
+
+>>>>>>> 1957d87b383dff0cc627314a42d42743fae3253e
 
                         }
                     };
