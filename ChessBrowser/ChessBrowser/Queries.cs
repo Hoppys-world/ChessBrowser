@@ -192,21 +192,23 @@ namespace ChessBrowser
                         {
                             string? d;
                             numRows++;
-                            if (reader["Date"] is object date && date != null)
+                            try
                             {
-                                try
+                                if (reader["Date"] is object date && date != null)
                                 {
                                     d = date.ToString();
                                 }
-                                catch
+                                else
                                 {
                                     d = "00/00/0000 12:00:00 AM";
                                 }
                             }
-                            else
+                            catch
                             {
                                 d = "00/00/0000 12:00:00 AM";
                             }
+                        
+                            
                            
                             parsedResult = parsedResult + "\n"
                                         + "Event: " + reader["Event"] + "\n"
