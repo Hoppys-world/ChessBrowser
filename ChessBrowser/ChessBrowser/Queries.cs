@@ -180,7 +180,6 @@ namespace ChessBrowser
 
                     }
                     sb.Append(";");
-                    Console.WriteLine(sb);
                     cmd.CommandText = sb.ToString();
 
 
@@ -195,7 +194,14 @@ namespace ChessBrowser
                             numRows++;
                             if (reader["Date"] is object date && date != null)
                             {
-                                d = date.ToString();
+                                try
+                                {
+                                    d = date.ToString();
+                                }
+                                catch
+                                {
+                                    d = "00/00/0000 12:00:00 AM";
+                                }
                             }
                             else
                             {
