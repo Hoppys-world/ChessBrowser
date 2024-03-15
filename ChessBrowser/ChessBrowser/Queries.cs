@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 /*
-  Author: Daniel Kopta and ...
+  Author: Daniel Kopta, Scott Skidmore and Jacob Hopkins
   Chess browser backend 
 */
 
@@ -30,18 +30,11 @@ namespace ChessBrowser
             // This will build a connection string to your user's database on atr,
             // assuimg you've typed a user and password in the GUI
             string connection = mainPage.GetConnectionString();
-
-            // TODO:
-            //       Load and parse the PGN file
-            //       We recommend creating separate libraries to represent chess data and load the file
+            // Load and parse the PGN file
             PgnReader pgnReader = new PgnReader();
             List<ChessGame> games = pgnReader.getChessGames(PGNfilename);
 
-            // TODO:
-            //       Use this to tell the GUI's progress bar how many total work steps there are
-            //       For example, one iteration of your main upload loop could be one work step
             mainPage.SetNumWorkItems(games.Count);
-
 
             using (MySqlConnection conn = new MySqlConnection(connection))
             {
@@ -49,9 +42,7 @@ namespace ChessBrowser
                 {
                     // Open a connection
                     conn.Open();
-                    
-                    // TODO:
-                    //       iterate through your data and generate appropriate insert commands
+                    // iterate through the data and generate appropriate insert commands
                     foreach (ChessGame game in games)
                     {
                         MySqlCommand cmd = new MySqlCommand();
@@ -73,7 +64,6 @@ namespace ChessBrowser
                         playercmd2.Parameters.AddWithValue("@PlayerName", game.blackPlayer);
                         playercmd2.Parameters.AddWithValue("@Elo", game.blackElo);
 
-
                         //create Games
                         MySqlCommand gamecmd = new MySqlCommand();
                         gamecmd.CommandText = "insert ignore into Games(Round, Result, Moves, BlackPlayer, WhitePlayer, eId) " + "values (@Round, @Result, @Moves, (select pID from Players where name = @BlackPlayer), (select pID from Players where name = @WhitePlayer), (select eId from Events where name = @EventName));";
@@ -88,7 +78,6 @@ namespace ChessBrowser
                         playercmd.Connection = conn;
                         playercmd2.Connection = conn;
                         gamecmd.Connection = conn;
-
 
                         cmd.ExecuteNonQuery();
                         playercmd.ExecuteNonQuery();
@@ -144,8 +133,6 @@ namespace ChessBrowser
                     conn.Open();
 
                     MySqlCommand cmd = conn.CreateCommand();
-
-
 
                     //create command string
                     StringBuilder sb = new StringBuilder();
@@ -204,17 +191,17 @@ namespace ChessBrowser
 
                         while (reader.Read())
                         {
-                            string d;
+                            string? d;
                             numRows++;
-                            try
+                            if (reader["Date"] is object date && date != null)
                             {
-                                d = reader["Date"].ToString();
+                                d = date.ToString();
                             }
-                            catch
+                            else
                             {
-
                                 d = "00/00/0000 12:00:00 AM";
                             }
+                           
                             parsedResult = parsedResult + "\n"
                                         + "Event: " + reader["Event"] + "\n"
                                         + "Site: " + reader["Site"] + "\n"
@@ -231,13 +218,6 @@ namespace ChessBrowser
 
                         }
                     };
-                    
-
-
-
-                    // TODO:
-                    //       Generate and execute an SQL command,
-                    //       then parse the results into an appropriate string and return it.
                 }
                 catch (Exception e)
                 {

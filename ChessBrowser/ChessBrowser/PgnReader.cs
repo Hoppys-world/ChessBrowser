@@ -14,13 +14,13 @@ namespace ChessBrowser
             List<ChessGame> games = new List<ChessGame>();
             using (StreamReader read = new StreamReader(fileName))
             {
-                string line = read.ReadLine();
+                string? line = read.ReadLine();
                 //if not null create new game and add data
                 while(line != null)
                 {
                     ChessGame game = new ChessGame();
                     //loop until blank line appears
-                    while (line.Length != 0)
+                    while (line != null && line.Length != 0)
                     {
                         //match for the Tag goes, until space
                         Match matchCollection = Regex.Match(line, @"[[a-zA-Z]+\s");
@@ -93,7 +93,7 @@ namespace ChessBrowser
                     //if space is found then read next line and get move list
                     StringBuilder sb = new StringBuilder();
                     line = read.ReadLine();
-                    while (line.Length != 0)
+                    while (line != null && line.Length != 0)
                     { 
                         sb.Append(line);
                         line = read.ReadLine();
