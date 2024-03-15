@@ -140,7 +140,7 @@ namespace ChessBrowser
                     {
                         // correct string should look like select p1.Name from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID limit 10;
 
-                        sb.Append("select Events.Name as Event, Site, Date, p1.Name as WhitePlayer, p2.Name as BlackPlayer, Result, Moves from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID");
+                        sb.Append("select Events.Name as Event, Site, Date, p1.Name as WhitePlayer, p2.Name as BlackPlayer,p1.Elo as WhiteElo, p2.Elo as BlackElo, Result, Moves from Players p1 join Players p2 join Games as g join Events where (p1.pID = g.WhitePlayer and p2.pID = g.BlackPlayer) and g.eID=Events.eID");
                     }
                     else
                     {
