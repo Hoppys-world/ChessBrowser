@@ -66,16 +66,19 @@ namespace ChessBrowser
 
                         //create Games
                         MySqlCommand gamecmd = new MySqlCommand();
-                        gamecmd.CommandText = "insert ignore into Games(Round, Result, Moves, BlackPlayer, WhitePlayer, eId) " + "values (@Round, @Result, @Moves, (select pID from Players where name = @BlackPlayer), (select pID from Players where name = @WhitePlayer), (select eId from Events where name = @EventName));";
+                        gamecmd.CommandText = "insert into Games(Round, Result, Moves, BlackPlayer, WhitePlayer, eId) " + "values (@Round, @Result, @Moves, (select pID from Players where name = @BlackPlayer), (select pID from Players where name = @WhitePlayer), (select eId from Events where name = @EventName and date = @Date and site = @Site));";
                         gamecmd.Parameters.AddWithValue("@Round", game.Round);
                         gamecmd.Parameters.AddWithValue("@Result", game.Result);
                         gamecmd.Parameters.AddWithValue("@Moves", game.moveList);
                         gamecmd.Parameters.AddWithValue("@BlackPlayer", game.blackPlayer);
                         gamecmd.Parameters.AddWithValue("@WhitePlayer", game.whitePlayer);
                         gamecmd.Parameters.AddWithValue("@EventName", game.Event);
+                        gamecmd.Parameters.AddWithValue("@Site", game.Site);
+                        gamecmd.Parameters.AddWithValue("@Date", game.eventDate);
 
                         cmd.Connection = conn;
                         playercmd.Connection = conn;
+                        
                         playercmd2.Connection = conn;
                         gamecmd.Connection = conn;
 
